@@ -2,47 +2,44 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
-  const [isMazeLoaded, setIsMazeLoaded] = useState(false);
-
-  useEffect(() => {
-    (function (m, a, z, e) {
-      var s, t;
-      try {
-        t = m.sessionStorage.getItem('maze-us');
-      } catch (err) {}
-      if (!t) {
-        t = new Date().getTime();
-        try {
-          m.sessionStorage.setItem('maze-us', t as any);
-        } catch (err) {}
-      }
-      s = a.createElement('script');
-      s.src = z + '?apiKey=' + e;
-      s.async = true;
-      s.onload = () => setIsMazeLoaded(true); // Atualiza o estado quando o script é carregado
-      a.getElementsByTagName('head')[0].appendChild(s);
-      m.mazeUniversalSnippetApiKey = e;
-    })(window, document, 'https://snippet.maze.co/maze-universal-loader.js', '4251a303-735e-4187-b751-5550fe15943c');
-  }, []);
-
-  const handleMazeButtonClick = () => {
-    if (isMazeLoaded) {
-      if (window.Maze) {
+    const [mazeLoaded, setMazeLoaded] = useState(false);
+  
+    useEffect(() => {
+      const script = document.createElement('script');
+      script.src = 'https://snippet.maze.co/maze-universal-loader.js?apiKey=4251a303-735e-4187-b751-5550fe15943c';
+      script.async = true;
+      script.onload = () => {
+        // Verifica se o objeto Maze está disponível após o carregamento do script
+        if (window.Maze) {
+          setMazeLoaded(true);
+        } else {
+          console.error('Maze script loaded but Maze object is not available.');
+        }
+      };
+      script.onerror = () => {
+        console.error('Failed to load the Maze script.');
+      };
+      document.head.appendChild(script);
+  
+      return () => {
+        // Remove o script se o componente for desmontado
+        document.head.removeChild(script);
+      };
+    }, []);
+  
+    const handleMazeButtonClick = () => {
+      if (mazeLoaded) {
         window.Maze.activatePrompt();
       } else {
-        console.error('Maze script not loaded yet.');
+        console.error('Maze script not loaded or Maze object is not available.');
       }
-    } else {
-      console.error('Maze API key not found. Ensure the Maze snippet is correctly integrated.');
-    }
-  };
-
-  return (
-    <div className="App">
-      <button onClick={handleMazeButtonClick}>Ativar Maze Prompt</button>
-    </div>
-  );
-
-}
+    };
+  
+    return (
+      <div className="App">
+        <button onClick={handleMazeButtonClick}>Ativar Maze</button>
+      </div>
+    );
+  }
 
 export default App
