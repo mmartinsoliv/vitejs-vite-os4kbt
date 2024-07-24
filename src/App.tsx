@@ -69,7 +69,7 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
       <button onClick={activateMazeScript} disabled={isLoading}>
-        {isLoading ? 'Ativando...' : 'Ativar Maze Script'}
+        {isLoading ? 'Ativando...' : 'Ativar Maze Script again'}
       </button>    </>
   )
 }
