@@ -5,20 +5,43 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   const loadMazeScript = () => {
-    // Verifica se o script já foi adicionado
-    if (document.getElementById('maze-script')) return;
+    if (isScriptLoaded) return; // Evita carregar o script novamente
 
-    // Cria um novo elemento de script
     const script = document.createElement('script');
     script.id = 'maze-script';
-    script.src = 'https://snippet.maze.co/maze-universal-loader.js?apiKey=4251a303-735e-4187-b751-5550fe15943c';
+    script.innerHTML = `
+      (function (m, a, z, e) {
+        var s, t;
+        try {
+          t = m.sessionStorage.getItem('maze-us');
+        } catch (err) {}
+
+        if (!t) {
+          t = new Date().getTime();
+          try {
+            m.sessionStorage.setItem('maze-us', t);
+          } catch (err) {}
+        }
+
+        s = a.createElement('script');
+        s.src = z + '?apiKey=' + e;
+        s.async = true;
+        a.getElementsByTagName('head')[0].appendChild(s);
+        m.mazeUniversalSnippetApiKey = e;
+      })(window, document, 'https://snippet.maze.co/maze-universal-loader.js', '4251a303-735e-4187-b751-5550fe15943c');
+    `;
     script.async = true;
 
     // Adiciona o script ao head do documento
     document.head.appendChild(script);
+
+    // Atualiza o estado para evitar carregamento duplo
+    setIsScriptLoaded(true);
   };
+
 
   return (
     <>
@@ -42,7 +65,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-      <button onClick={loadMazeScript}>Ativar prompt Maze</button>
+      <button onClick={loadMazeScript}>Ativar prompt Maze Test</button>
     </>
   )
 }
