@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -9,52 +9,56 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState(false);
 
-  const loadMazeScript = () => {
-    if (isScriptLoaded || isLoading) return; // Evita carregar o script novamente ou se já está carregando
+  useEffect(() => {
+    // Adiciona o script ao head do documento quando o componente é montado
+    const script = document.createElement('script');
+    script.id = 'maze-script';
+    script.src = 'https://snippet.maze.co/maze-universal-loader.js?apiKey=4251a303-735e-4187-b751-5550fe15943c';
+    script.async = true;
+    script.onload = () => {
+      setIsScriptLoaded(true);
+      console.log('Maze script loaded successfully.');
+    };
+    script.onerror = () => {
+      setLoadError(true);
+      console.error('Error loading maze script.');
+    };
+    document.head.appendChild(script);
+
+    // Limpeza ao desmontar o componente
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  const activateMazeScript = () => {
+    if (!isScriptLoaded || isLoading) return; // Verifica se o script está carregado e não está carregando novamente
 
     setIsLoading(true);
     setLoadError(false);
 
-    const script = document.createElement('script');
-    script.id = 'maze-script';
-    script.type = 'text/javascript';
-    script.innerHTML = `
-      (function (m, a, z, e) {
-        var s, t;
+    // Executa o código JavaScript fornecido
+    (function (m, a, z, e) {
+      var s, t;
+      try {
+        t = m.sessionStorage.getItem('maze-us');
+      } catch (err) {}
+
+      if (!t) {
+        t = new Date().getTime();
         try {
-          t = m.sessionStorage.getItem('maze-us');
+          m.sessionStorage.setItem('maze-us', t);
         } catch (err) {}
+      }
 
-        if (!t) {
-          t = new Date().getTime();
-          try {
-            m.sessionStorage.setItem('maze-us', t);
-          } catch (err) {}
-        }
+      s = a.createElement('script');
+      s.src = z + '?apiKey=' + e;
+      s.async = true;
+      a.getElementsByTagName('head')[0].appendChild(s);
+      m.mazeUniversalSnippetApiKey = e;
 
-        s = a.createElement('script');
-        s.src = z + '?apiKey=' + e;
-        s.async = true;
-        a.getElementsByTagName('head')[0].appendChild(s);
-        m.mazeUniversalSnippetApiKey = e;
-      })(window, document, 'https://snippet.maze.co/maze-universal-loader.js', '4251a303-735e-4187-b751-5550fe15943c');
-    `;
-
-    // Adiciona o script ao head do documento
-    document.head.appendChild(script);
-
-    // Atualiza o estado para evitar carregamento duplo
-    script.onload = () => {
       setIsLoading(false);
-      setIsScriptLoaded(true);
-      console.log('Maze script loaded successfully.');
-    };
-
-    script.onerror = () => {
-      setIsLoading(false);
-      setLoadError(true);
-      console.error('Error loading maze script.');
-    };
+    })(window, document, 'https://snippet.maze.co/maze-universal-loader.js', '4251a303-735e-4187-b751-5550fe15943c');
   };
 
 
@@ -80,8 +84,9 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-      <button onClick={loadMazeScript}>Ativar prompt Maze Test</button>
-    </>
+      <button onClick={activateMazeScript} disabled={isLoading}>
+        {isLoading ? 'Ativando...' : 'Ativar Maze Script'}
+      </button>    </>
   )
 }
 
