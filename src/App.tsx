@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -7,7 +7,7 @@ function App() {
   const [count, setCount] = useState(0)
   const [isScriptCalled, setIsScriptCalled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadError, setLoadError] = useState(false);
+  const [_, setLoadError] = useState(false);
 
   const activateMazeScript = () => {
     if (isScriptCalled || isLoading) return; // Evita chamar o script novamente se já estiver chamado
@@ -26,7 +26,7 @@ function App() {
         if (!t) {
           t = new Date().getTime();
           try {
-            m.sessionStorage.setItem('maze-us', t);
+            m.sessionStorage.setItem('maze-us', t as any);
           } catch (err) {}
         }
 
