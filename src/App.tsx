@@ -13,7 +13,7 @@ function App() {
       if (!t) {
         t = new Date().getTime();
         try {
-          m.sessionStorage.setItem('maze-us', t);
+          m.sessionStorage.setItem('maze-us', t as any);
         } catch (err) {}
       }
       s = a.createElement('script');
@@ -39,7 +39,7 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={handleMazeButtonClick}>Ativar Maze</button>
+      <button onClick={handleMazeButtonClick}>Ativar Maze Prompt</button>
     </div>
   );
 
