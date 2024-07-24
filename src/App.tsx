@@ -6,6 +6,20 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
 
+  const loadMazeScript = () => {
+    // Verifica se o script já foi adicionado
+    if (document.getElementById('maze-script')) return;
+
+    // Cria um novo elemento de script
+    const script = document.createElement('script');
+    script.id = 'maze-script';
+    script.src = 'https://snippet.maze.co/maze-universal-loader.js?apiKey=4251a303-735e-4187-b751-5550fe15943c';
+    script.async = true;
+
+    // Adiciona o script ao head do documento
+    document.head.appendChild(script);
+  };
+
   return (
     <>
       <div>
@@ -28,6 +42,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <button onClick={loadMazeScript}>Ativar prompt Maze</button>
     </>
   )
 }
