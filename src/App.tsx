@@ -6,12 +6,18 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const loadMazeScript = () => {
-    if (isScriptLoaded) return; // Evita carregar o script novamente
+    if (isScriptLoaded || isLoading) return; // Evita carregar o script novamente ou se já está carregando
+
+    setIsLoading(true);
+    setLoadError(false);
 
     const script = document.createElement('script');
     script.id = 'maze-script';
+    script.type = 'text/javascript';
     script.innerHTML = `
       (function (m, a, z, e) {
         var s, t;
@@ -33,13 +39,22 @@ function App() {
         m.mazeUniversalSnippetApiKey = e;
       })(window, document, 'https://snippet.maze.co/maze-universal-loader.js', '4251a303-735e-4187-b751-5550fe15943c');
     `;
-    script.async = true;
 
     // Adiciona o script ao head do documento
     document.head.appendChild(script);
 
     // Atualiza o estado para evitar carregamento duplo
-    setIsScriptLoaded(true);
+    script.onload = () => {
+      setIsLoading(false);
+      setIsScriptLoaded(true);
+      console.log('Maze script loaded successfully.');
+    };
+
+    script.onerror = () => {
+      setIsLoading(false);
+      setLoadError(true);
+      console.error('Error loading maze script.');
+    };
   };
 
 
