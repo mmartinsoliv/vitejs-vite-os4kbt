@@ -15,7 +15,7 @@ const App = () => {
       if (!t) {
         t = new Date().getTime();
         try {
-          m.sessionStorage.setItem('maze-us', t);
+          m.sessionStorage.setItem('maze-us', t as any);
         } catch (err) {}
       }
 
