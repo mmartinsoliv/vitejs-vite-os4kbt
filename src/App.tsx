@@ -6,7 +6,7 @@ function App() {
   
     return (
       <div className="App">
-        <button>Ativar Maze</button>
+        <button>Ativar Maze teste</button>
       </div>
     );
   }
